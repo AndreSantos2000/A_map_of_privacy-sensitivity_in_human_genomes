@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def add_headersToDf(dataframe):
     return dataframe.rename(columns={0: 'Chromossome', 1: 'First_index', 2: 'Last_index', 3: 'Citoband', 4: 'Unkown'})
@@ -44,33 +45,39 @@ def Somatorio_STR_lengths(citoband, STR_df):
     """
     totalSTRlength = 0
     for row in range(len(STR_df.values)):
-        if STR_df["Citoband"][row] == citoband[3] or citoband[3] in STR_df["Citoband"][row]:
+        if STR_df["Citoband"][row] == citoband[3]:# or citoband[3] in STR_df["Citoband"][row]:
             totalSTRlength += int(STR_df["ArrayLength"][row])
+        elif citoband[3] in STR_df["Citoband"][row]:
+            if citoband[3] + " &" in STR_df["Citoband"][row]:
+                print("primeira citoband do par")
+                totalSTRlength += int(citoband[2]) - int(STR_df["FirstIndex"][row])
+            elif "& " + citoband[3] in STR_df["Citoband"][row]:
+                print("segunda citoband do par")
+                totalSTRlength += int(STR_df["LastIndex"][row]) - int(citoband[1])
+
     return totalSTRlength
 
-#######################Esta função só considera STRs em linhas seguidas############################################
-def STR_overlap(STR_ds):
+#Esta função só considera STRs em linhas seguidas
+def STR_overlap(citoband, STR_df):
     to_subtract = 0
-    for row in range(len(STR_ds)-2):
-        last_index = STR_ds[row][2]
-        first_index2 = STR_ds[row+1][1]
-        if first_index2<last_index:
-            to_subtract += last_index - first_index2
+    for row in range(len(STR_df)-1):
+        if str(citoband) in STR_df["Citoband"][row] and str(citoband) in STR_df["Citoband"][row+1]:
+            last_index = STR_df["LastIndex"][row]
+            next_first_index = STR_df["FirstIndex"][row + 1]
+            if next_first_index<last_index:
+                print("overlap found")
+                to_subtract += last_index - next_first_index
     return to_subtract
 
 
-def STR_dens_toCitoband(citobands_df, STR_ds):
+def STR_dens_toCitoband(citobands_df, STR_df):
     """
     """
     densities = []
     for citoband in citobands_df.values:
-        density = Somatorio_STR_lengths(citoband, STR_ds)/int(citoband[-1])
+        density = (Somatorio_STR_lengths(citoband, STR_df) - STR_overlap(citoband, STR_df)) /int(citoband[-1])
         densities.append(density)
     citobands_df.insert(len(citobands_df.columns), "STR_Density", densities, True)
-
-    
-
-
 
 
 def writetxt(txt_path, df):
@@ -83,15 +90,26 @@ def writeNewtxt(file_path, df):
     """Writes a pandas dataframe into txt, columns separated by tabs ("\t")
     """
     f = open(file_path, 'w')
-    print(df.values)
+    str_cols = ""
+    for col in df.columns[:-1]:
+        str_cols += col + "\t"
+    str_cols += df.columns.values[-1]+ "\n"
+    f.write(str(str_cols))
     for row in df.values:
         str_row = ""
-        for col in row[:-1] :
+        for col in row[:-1]:
             str_row += str(col) + "\t"
         str_row += str(row[-1])+ "\n"
         f.write(str_row)
     f.close
 
+def makeaplot(x, y):
+    plt.figure(figsize=(10,10))
+    plt.plot(x, y)
+    plt.xlabel("Citoband")
+    plt.ylabel("STR_density")
+    plt.grid()
+    plt.show()
 
 
 
@@ -109,7 +127,11 @@ add_sizeColumn(citobands_df)
 
 citobands_df_18 = getChromossome(citobands_df, 18)
 
+#print(str_df)
 STR_dens_toCitoband(citobands_df_18, str_df)
 print(citobands_df_18)
 
 writetxt(citoPath_write, citobands_df_18)
+#writeNewtxt(citoPath_write, citobands_df_18)
+
+makeaplot(citobands_df_18["Citoband"], citobands_df_18["STR_Density"])
