@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 def add_headersToDf(dataframe):
     return dataframe.rename(columns={0: 'Chromossome', 1: 'First_index', 2: 'Last_index', 3: 'Citoband', 4: 'Unkown'})
@@ -111,6 +112,27 @@ def makeaplot(x, y):
     plt.grid()
     plt.show()
 
+def calc_strDensity(citobands_df, STR_df):
+    densities = []
+    citobands_size = citobands_df["Last_index"][-1:]+1
+    citobands_strs = np.zeros((citobands_size), dtype=int)
+    #print(len(citobands_strs))
+    for row in range(len(STR_df.values)):
+        for i in range (STR_df["FirstIndex"][row], STR_df["LastIndex"][row]):
+            citobands_strs[i]+=1
+    print("total STR length in chromossome ", chr, ": ", np.count_nonzero(citobands_strs))
+    for citoband in range(len(citobands_df.values)):
+        citoband_array = citobands_strs[int(citobands_df["First_index"][citoband]):int(citobands_df["Last_index"][citoband])]
+        #print(citoband_array)
+        str_length = np.count_nonzero(citoband_array)
+        citoband_length = citobands_df["Size"][citoband]
+        density = str_length/citoband_length
+        densities.append(density)
+        
+        #print(np.where(citoband_strs > 0))
+    citobands_df.insert(len(citobands_df.columns), "STR_Density", densities, True)
+
+
 
 
 citoPath_read = "/home/androx/Documents/trabalho/citobands/cytobandFiltered.txt"
@@ -128,10 +150,11 @@ add_sizeColumn(citobands_df)
 citobands_df_18 = getChromossome(citobands_df, 18)
 
 #print(str_df)
-STR_dens_toCitoband(citobands_df_18, str_df)
+#STR_dens_toCitoband(citobands_df_18, str_df)
+calc_strDensity(citobands_df_18, str_df)
 print(citobands_df_18)
 
-writetxt(citoPath_write, citobands_df_18)
+#writetxt(citoPath_write, citobands_df_18)
 #writeNewtxt(citoPath_write, citobands_df_18)
 
 makeaplot(citobands_df_18["Citoband"], citobands_df_18["STR_Density"])
