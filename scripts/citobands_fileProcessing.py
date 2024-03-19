@@ -45,7 +45,7 @@ def calc_strDensity(citobands_df, STR_df):
     densities = []
     #print(citobands_df["Chromossome"].unique())
     #print(citobands_df.columns)
-    for chr in citobands_df["Chromossome"].unique():
+    for chr in citobands_df["Chromossome"].unique():                #ordem esta definida aqui
         print("searching citobands in chromossome: ", chr)
         citobands_chr = getChromossome(citobands_df, chr)
         #print(citobands_chr)
@@ -97,42 +97,6 @@ def writeNewtxt(file_path, df):
         f.write(str_row)
     f.close
 
-def makeaplot(x, y, z=None):
-    plt.figure(figsize=(10,10))
-    x_array = []
-    y_array = []
-    for line in x:
-        x_array.append(str(line))
-    for line in y:
-        y_array.append(str(line))
-    plt.plot(x_array, y_array)
-    plt.xlabel("Citoband")
-    plt.ylabel("STRDensity")
-    #plt.zlabel("STR density")
-    plt.grid()
-    plt.show()
-
-def makeAllPlots(cb_df):
-    chromossomes = cb_df["Chromossome"].unique()
-    #citobands = cb_df["Citoband"].unique()
-    for chromossome in chromossomes:
-        chr_df = getChromossome(cb_df, chromossome)
-        makeaplot(chr_df["Citoband"], chr_df["STR_Density"])
-
-def plotAll(cb_df):
-    figure, axis = plt.subplots(4, 6) 
-    chromossomes = cb_df["Chromossome"].unique()
-    chr_n = 0
-    for i in range(4):
-        for j in range(6):
-            chr_df = getChromossome(cb_df, chromossomes[chr_n])
-            axis[i, j].plot(chr_df["Citoband"], chr_df["STR_Density"])
-            axis[i, j].set_title("STR densities in chromossome: " + chromossomes[chr_n])
-            chr_n += 1
-            #axis.invert_yaxis()
-    plt.show() 
-     
-
 citoPath_read = "/home/androx/Documents/trabalho/citobands/cytobandFiltered.txt"
 citoPath_write = "/home/androx/Documents/trabalho/citobands/cytobandFiltered_processed_complete.txt"
 #STRPath_read = "/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_nov2014/HomosapiensHG38_FullGenome_processed.txt"
@@ -152,8 +116,3 @@ print(citobands_df)
 
 #writetxt(citoPath_write, citobands_df)
 writeNewtxt(citoPath_write, citobands_df)
-
-
-#makeAllPlots(citobands_df)
-#makeaplot(citobands_df["Chromossome"].unique(), citobands_df["Citoband"].unique())#, citobands_df["STR_Density"])
-plotAll(citobands_df)

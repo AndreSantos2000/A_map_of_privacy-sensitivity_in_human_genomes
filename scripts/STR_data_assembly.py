@@ -10,10 +10,10 @@ def join_dataframes(STR_df1, STR_df2):
 def CreateFilesArray():
     STRFiles = []
     for i in range (1, 23):
-        STRPath = "/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr." + str(i) + ".txt"
+        STRPath = "/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr" + str(i) + ".txt"
         STRFiles.append(STRPath)
-    STRFiles.append("/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr." + "X" + ".txt")
-    STRFiles.append("/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr." + "Y" + ".txt")
+    STRFiles.append("/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr" + "X" + ".txt")
+    STRFiles.append("/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016/HumanChr" + "Y" + ".txt")
     return STRFiles
 
 def merge_all(files_list):
@@ -50,7 +50,7 @@ STRwrite = "/home/androx/Documents/trabalho/datasets/STR/HomosapiensHG38_jan2016
 STRFiles = CreateFilesArray()
 STR_all = merge_all(STRFiles)
 writeNewtxt(STRwrite, STR_all)
-print(STR_all.shape)            #total nº of repeats should be 1.199.628, current is 955.680, so its missing more than 200.000 rows!
+print(STR_all.shape)            #total nº of repeats should be 1.199.628, current is 99?.???, so its missing about 200.000 rows!
 print(STR_all.head)
 print(STR_all["FastaHeader"][30000])
 #merged_df = join_dataframes(STRPath_read1, STRPath_read2)
