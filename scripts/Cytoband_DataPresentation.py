@@ -56,8 +56,8 @@ def makeMap_cb(cb_df):
     for chromosome in chromossomes:
         chr_subset = cb_df.get(cb_df["Chromossome"] == chromosome)
         citobands = chr_subset["Citoband"].unique()
-        ps = np.zeros(45, dtype=(str, 6))
-        qs = np.zeros(45, dtype=(str, 6))
+        ps = np.zeros(40, dtype=(str, 6))
+        qs = np.zeros(40, dtype=(str, 6))
         pcount = -1
         qcount = 0
         for cytoband in citobands:
@@ -83,11 +83,12 @@ def makeMap_dens(cb_df):
     cytobands = list(map(str, cytobands))
     mapping = []
     row_count = 0
+    print(chromossomes)
     for chromosome in chromossomes:
         chr_subset = cb_df.get(cb_df["Chromossome"] == chromosome)
         cytobands = chr_subset["Citoband"].unique()
-        ps = np.zeros(45, dtype=(float, 6))
-        qs = np.zeros(45, dtype=(float, 6))
+        ps = np.zeros(34, dtype=(float, 1))
+        qs = np.zeros(38, dtype=(float, 1))
         pcount = -1
         qcount = 0
         count = row_count
@@ -107,10 +108,13 @@ def makeMap_dens(cb_df):
             row_count+=1
         ps_list = ps.tolist()
         qs_list = qs.tolist()
+        #print(ps_list)
+        #print(qs_list)
         pqs = ps_list + qs_list
-        mapping.append(cytobands.tolist())
+        #mapping.append(cytobands.tolist())
         mapping.append(pqs)
-    print("mapping: ", mapping)
+    print("mapping: ", mapping[11])
+    print("mapping length: ", len(mapping))
     return mapping
 
 
@@ -164,31 +168,96 @@ def makeMap_dict(cb_df):
     print("mapping: ", mapping)
     return mapping
 
-def plotMap(data):
-    #x = chromossomes#[0]
-    #y = mapping#[0]
-    #x=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-    #plt.xticks(x,chromossomes)
+def plotMap(data, dict):
+    
+    #mais tarde inverter as linhas com as colunas
+    rows = ('chr1', 'chr10', 'chr11', 'chr12', 'chr13', 'chr14', 'chr15', 'chr16', 'chr17', 'chr18', 'chr19', 'chr2', 'chr20', 'chr21', 'chr22', 'chr3', 'chr4', 'chr5', 'chr6', 'chr7', 'chr8', 'chr9', 'chrX', 'chrY')
+    cols = ["p34", "p33", "p32", "p31", "p30", "p29", "p28", "p27", "p26", "p25", "p24", "p23", "p22", "p21", "p20", "p19", "p18", "p17", "p16", "p15", "p14", "p13", "p12", "p11", "p10", "p09", "p08", "p07", "p06", "p05", "p04", "p03", "p02", "p01-centromer", "q01-centromer", "q02", "q03", "q04", "q05", "q06", "q07", "q08", "q09", "q10", "q11", "q12", "q13", "q14", "q15", "q16", "q17", "q18", "q19", "q20", "q21", "q22", "q23", "q24", "q25", "q26", "q27", "q28", "q29", "q30", "q31", "q32", "q33", "q34", "q35", "q36", "q37", "q38"]
+    
+    n_rows = len(data)
+    n_cols = len(data[0])
 
-    #plt.plot(x, y)
-    #plt.xticks(x,chromossomes)
+    #index = np.arange(len(columns)) + 0.3
+    index = np.arange(len(rows)) + 0.3
+    bar_width = 0.4
 
-    #the_table = plt.table(cellText=cell_text,
-    #                  rowLabels=row_headers,
-    #                  rowColours=rcolors,
-    #                  colLabels=column_headers,
-    #                  loc='center')
+    # Initialize the vertical-offset for the stacked bar chart.
+    y_offset = np.zeros(len(rows))
+
+    # Plot bars and create text labels for the table
+    cell_text = []
+    for row in range(n_rows):
+        #plt.bar(index, data[row], bar_width, bottom=y_offset)#, color=colors[row])
+        #y_offset = y_offset + data[row]
+        #cell_text.append(['%1.1f' % (x / 1000.0) for x in y_offset])
+        cell_text.append(data[row])
+
+    #Get some lists of color specs for row and column headers
+    rcolors = plt.cm.BuPu(np.full(len(rows), 0.1))
+    ccolors = plt.cm.BuPu(np.full(len(cols), 0.1))
+    cellcolours = plt.cm.YlOrRd(data)                     #coolwarm, Greys
+
+    plt.figure(linewidth=2,
+           #edgecolor=fig_border,
+           #facecolor=fig_background_color,
+           tight_layout={'pad':1},
+           figsize = (72,24),
+          )
+    
+
+    the_table = plt.table(cellText=cell_text,
+                      rowLabels=rows,
+                      colLabels=cols,
+                      rowLoc='right',
+                      rowColours=rcolors,
+                      colColours=ccolors,
+                      cellColours=cellcolours,
+                      loc='center')
+    
+    the_table.scale(1, 2)
+    # Hide axes
+    ax = plt.gca()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+    
+    # Hide axes border
+    plt.box(on=None)
+    
+    # Add title
+    plt.suptitle("STR density in human genome")
     
     
-    #the_table.scale(1, 1.5)
-
-    plt.savefig('pyplot-table-figure-style.png',
-            bbox_inches='tight',
+    # Force the figure to update, so backends center objects correctly within the figure.
+    # Without plt.draw() here, the title will center on the axes and not the figure.
+    plt.draw()
+    
+    # Create image. plt.savefig ignores figure edge and face colors, so map them.
+    fig = plt.gcf()
+    
+    plt.savefig('STR_density_in_human_genome.png',
+            #bbox='tight',
             #edgecolor=fig.get_edgecolor(),
             #facecolor=fig.get_facecolor(),
             dpi=150
             )
+    
+    #plt.subplots_adjust(left=0.2, bottom=0.2)
+    
+    #plt.xlabel("Citobands")
+    #plt.ylabel("STRs density")
+    #plt.yticks(values * value_increment, ['%d' % val for val in values])
+    
+    #plt.xticks([])
+    #plt.title('STR density in human genome')
+
     #plt.show()
+
+    #plt.plot(x, y)
+    #plt.xticks(x,chromossomes)
+    #the_table.scale(1, 1.5)
+    #plt.show()
+
+
 
 citoPath_read = "/home/androx/Documents/trabalho/citobands/cytobandFiltered_processed_complete.txt"
 
@@ -201,6 +270,8 @@ cb_df = pd.read_csv(citoPath_read, sep="\t")
 
 #makeMap_cb(cb_df)
 
-makeMap_dens(cb_df)
+dens_map = makeMap_dens(cb_df)
+
+plotMap(dens_map)
 
 #plotMap(cb_df)
