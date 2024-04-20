@@ -149,12 +149,7 @@ add_sizeColumn(citobands_df)
 
 citobands_df_18 = getChromossome(citobands_df, 18)
 
-#print(str_df)
-#STR_dens_toCitoband(citobands_df_18, str_df)
 calc_strDensity(citobands_df_18, str_df)
 print(citobands_df_18)
-
-#writetxt(citoPath_write, citobands_df_18)
-#writeNewtxt(citoPath_write, citobands_df_18)
 
 makeaplot(citobands_df_18["Citoband"], citobands_df_18["STR_Density"])
