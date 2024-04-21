@@ -20,8 +20,10 @@ def getChromossome(df, n):
 
 
 def plotAll(cb_df):
-    figure, axis = plt.subplots(4, 6)
+    figure, axis = plt.subplots(4, 6, figsize=(60,30))
     chromossomes = cb_df["Chromossome"].unique()
+    chromossomes = list(map(str, chromossomes))
+    chromossomes.remove("chrM")
     chr_n = 0
     for i in range(4):
         for j in range(6):
@@ -33,7 +35,8 @@ def plotAll(cb_df):
             axis[i, j].set_title("STR densities in chromossome: " + chromossomes[chr_n])
             chr_n += 1
             #axis.invert_yaxis()
-    plt.show()
+    plt.savefig("images/STRsDensity_inHumanChromosomes")
+    #plt.show()
 
 
 def plot_1chr(cb_df, chromossome):
@@ -48,12 +51,12 @@ def plot_1chr(cb_df, chromossome):
     plt.savefig(chromossome + "STR density")
 
 def createAllPlots(cb_df):
+    """+- util"""
     chromossomes = cb_df["Chromossome"].unique()
     chromossomes = list(map(str, chromossomes))
     chromossomes.remove("chrM")
     for chromosome in chromossomes:
         plot_1chr(cb_df, chromosome)
-
 
 def makeMap_dens(cb_df):
     chromossomes = cb_df["Chromossome"].unique()
@@ -184,7 +187,9 @@ def plotMap(data, dict):
                       cellColours=cellcolours,
                       loc='center')
     
-    the_table.scale(1, 2)
+    the_table.auto_set_font_size(False)
+    the_table.set_fontsize(7)
+    the_table.scale(1, 3)
     # Hide axes
     ax = plt.gca()
     ax.get_xaxis().set_visible(False)
@@ -194,7 +199,7 @@ def plotMap(data, dict):
     plt.box(on=None)
     
     # Add title
-    plt.suptitle("STR density in human genome")
+    plt.suptitle("STR density in human genome", fontsize='xx-large')
     
     # Force the figure to update, so backends center objects correctly within the figure.
     # Without plt.draw() here, the title will center on the axes and not the figure.
@@ -203,7 +208,7 @@ def plotMap(data, dict):
     # Create image. plt.savefig ignores figure edge and face colors, so map them.
     fig = plt.gcf()
     
-    plt.savefig('STR_density_in_human_genome.png',
+    plt.savefig('images/STR_density_in_human_genome.png',
             #bbox='tight',
             #edgecolor=fig.get_edgecolor(),
             #facecolor=fig.get_facecolor(),
@@ -219,6 +224,6 @@ cb_df = pd.read_csv(citoPath_read, sep="\t")
 dens_map = makeMap_dens(cb_df)
 dict_map= makeMap_dict(cb_df)
 
-plotMap(dens_map, dict_map)
+#plotMap(dens_map, dict_map)
 
-#createAllPlots(cb_df)
+plotAll(cb_df)
