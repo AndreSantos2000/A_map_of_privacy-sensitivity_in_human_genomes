@@ -71,6 +71,10 @@ def makeMap_dens(cb_df):
         cytobands = chr_subset["Citoband"].unique()
         ps = np.zeros(34, dtype=(float, 1))
         qs = np.zeros(38, dtype=(float, 1))
+        for n in range(len(ps)):
+            ps[n] = np.nan
+        for n in range(len(qs)):
+            qs[n] = np.nan
         pcount = -1
         qcount = 0
         p_list = []
@@ -99,9 +103,7 @@ def makeMap_dens(cb_df):
         ps_list = ps.tolist()
         qs_list = qs.tolist()
         pqs = ps_list + qs_list
-        for n in range(len(pqs)):
-            if pqs[n] == 0:
-                pqs[n] = np.nan
+        
         mapping.append(pqs)
     return mapping
 
@@ -140,7 +142,7 @@ def makeMap_dict(cb_df):
         p_list.reverse()
         for p in p_list:
             ps[pcount] = p
-            pcount -= 1#-= 1
+            pcount -= 1
         for q in q_list:
             qs[qcount] = q
             qcount += 1
