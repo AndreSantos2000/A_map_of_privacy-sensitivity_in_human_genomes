@@ -99,7 +99,7 @@ def makeMap_dens(cb_df):
         ps_list = ps.tolist()
         qs_list = qs.tolist()
         pqs = ps_list + qs_list
-        for n in range(len(pqs)-1):
+        for n in range(len(pqs)):
             if pqs[n] == 0:
                 pqs[n] = np.nan
         mapping.append(pqs)
@@ -147,7 +147,7 @@ def makeMap_dict(cb_df):
         ps_list = ps.tolist()
         qs_list = qs.tolist()
         pqs = ps_list + qs_list
-        for n in range(len(pqs)-1):
+        for n in range(len(pqs)):
             if pqs[n] == [0, 0]:
                 pqs[n] = np.nan
         mapping.update({chromosome : pqs})
@@ -202,7 +202,7 @@ def plotMap(data, dict):
     plt.box(on=None)
     
     # Add title
-    plt.suptitle("STR density in human genome", fontsize='xx-large')
+    #plt.suptitle("STR density in human genome", fontsize='xx-large')
     
     # Force the figure to update, so backends center objects correctly within the figure.
     # Without plt.draw() here, the title will center on the axes and not the figure.
