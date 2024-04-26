@@ -99,6 +99,9 @@ def makeMap_dens(cb_df):
         ps_list = ps.tolist()
         qs_list = qs.tolist()
         pqs = ps_list + qs_list
+        for n in range(len(pqs)-1):
+            if pqs[n] == 0:
+                pqs[n] = np.nan
         mapping.append(pqs)
     return mapping
 
@@ -146,7 +149,7 @@ def makeMap_dict(cb_df):
         pqs = ps_list + qs_list
         for n in range(len(pqs)-1):
             if pqs[n] == [0, 0]:
-                pqs[n] = ["Na", None]
+                pqs[n] = np.nan
         mapping.update({chromosome : pqs})
     return mapping
 
@@ -168,7 +171,7 @@ def plotMap(data, dict):
     #Get some lists of color specs for row and column headers
     rcolors = plt.cm.BuPu(np.full(len(rows), 0.1))
     ccolors = plt.cm.BuPu(np.full(len(cols), 0.1))
-    cellcolours = plt.cm.YlOrRd(data)                     #coolwarm, Greys
+    cellcolours = plt.cm.YlOrRd(data)#.set_bad(color='white')         #coolwarm, Greys
 
     plt.figure(linewidth=2,
            #edgecolor=fig_border,
@@ -189,7 +192,7 @@ def plotMap(data, dict):
     
     the_table.auto_set_font_size(False)
     the_table.set_fontsize(7)
-    the_table.scale(1, 3)
+    the_table.scale(1, 4)
     # Hide axes
     ax = plt.gca()
     ax.get_xaxis().set_visible(False)
@@ -224,6 +227,6 @@ cb_df = pd.read_csv(citoPath_read, sep="\t")
 dens_map = makeMap_dens(cb_df)
 dict_map= makeMap_dict(cb_df)
 
-#plotMap(dens_map, dict_map)
+plotMap(dens_map, dict_map)
 
-plotAll(cb_df)
+#plotAll(cb_df)
